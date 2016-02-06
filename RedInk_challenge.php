@@ -25,19 +25,26 @@ array_walk($usage_array, function(&$a) use ($usage_array) {
 # remove column header
 array_shift($usage_array);
 
-echo "\nEnter the number of questions you want to choose? ";
+echo "\nEnter the number of questions you want to choose: ";
 $handle = fopen ("php://stdin","r");
 $line = fgets($handle);
 print_R("\nEntered input: ");
 print_r($line);
 if(trim($line) == '0'){
-    echo "Aborting as '0' is not a valid input!\n";
+    echo "Please enter a value greater than 0\n";
     exit;
 }
 
 $line = intval($line);
 echo "\n"; 
 echo "Continuing with the input covered to int: $line\n";
+
+
+// Split questions array based on different strands
+$questions_based_on_strands = array();
+foreach($questions_array as $values) {
+    $questions_based_on_strands[$values['strand_id']][] = $values;
+}
 
 
 ?>
