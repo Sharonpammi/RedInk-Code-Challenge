@@ -25,5 +25,19 @@ array_walk($usage_array, function(&$a) use ($usage_array) {
 # remove column header
 array_shift($usage_array);
 
+echo "\nEnter the number of questions you want to choose? ";
+$handle = fopen ("php://stdin","r");
+$line = fgets($handle);
+print_R("\nEntered input: ");
+print_r($line);
+if(trim($line) == '0'){
+    echo "Aborting as '0' is not a valid input!\n";
+    exit;
+}
+
+$line = intval($line);
+echo "\n"; 
+echo "Continuing with the input covered to int: $line\n";
+
 
 ?>
