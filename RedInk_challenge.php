@@ -25,26 +25,67 @@ array_walk($usage_array, function(&$a) use ($usage_array) {
 # remove column header
 array_shift($usage_array);
 
+
+// Read input from command line
 echo "\nEnter the number of questions you want to choose: ";
 $handle = fopen ("php://stdin","r");
 $line = fgets($handle);
-print_R("\nEntered input: ");
 print_r($line);
 if(trim($line) == '0'){
-    echo "Please enter a value greater than 0\n";
-    exit;
+    echo "Please enter a value greater than 0\n";
+    exit;
 }
 
-$line = intval($line);
-echo "\n"; 
-echo "Continuing with the input covered to int: $line\n";
+$number_of_questions = intval($line);
+echo "\nContinuing with the input covered to int: $line\n";	
 
 
 // Split questions array based on different strands
 $questions_based_on_strands = array();
 foreach($questions_array as $values) {
-    $questions_based_on_strands[$values['strand_id']][] = $values;
+    $questions_based_on_strands[$values['strand_id']][] = $values;
 }
 
 
-?>
+// Sort array based on difficult from easy to hard
+foreach ($questions_based_on_strands as $key => &$val) {
+	usort($val, 'sortByDifficulty');
+}
+
+function sortByDifficulty($a, $b) {
+    return $a['difficulty'] > $b['difficulty'];
+}
+
+// array rekey to avoid any mis placed array keys
+$questions_based_on_strands = array_values($questions_based_on_strands);
+
+
+// Process user input to recommend questions
+$question_ids = array();
+$i = 0;
+
+
+while($number_of_questions > 0){
+
+
+	$flag = TRUE;
+	// Get the key for strands by using modulus
+	$key = $number_of_questions % count($questions_based_on_strands);
+
+
+	$question_id = $questions_based_on_strands[$key][$i]['question_id'];
+
+	while(!in_array($question_id, $question_ids)){	
+			$question_id = $questions_based_on_strands[$key][$i]['question_id'];		
+			$question_ids[] = $question_id;
+			$i++;
+			break;
+
+	}
+
+
+	$number_of_questions--;
+}
+
+print("recommend question ids: ");
+print_R(join(",", $question_ids)."\n");
